@@ -9,9 +9,10 @@ import (
 	viper "github.com/spf13/viper"
 )
 
-func getEnv() (apiKey string) {
+func GetEnv() (apiKey, domain string) {
 	// Set config file
-    viper.SetConfigFile("../.env")
+    viper.SetConfigFile(".env")
+	viper.SetConfigType("env")
     
 	// Try to read config file, return any errors
 	if err := viper.ReadInConfig(); err != nil {
@@ -20,15 +21,21 @@ func getEnv() (apiKey string) {
     }
 
 	// Read api_key from config.yaml file
-    apiKey = viper.GetString("api_key")
+    apiKey = viper.GetString("key")
+	domain = viper.GetString("domainName")
     
 	// Return error if key is empty
 	if apiKey == "" {
-        fmt.Println("API_KEY not found in config file")
+        fmt.Println("key not found in .env file")
         return
     }
 
-	return apiKey
+	if domain == "" {
+        fmt.Println("domainName not found in .env file")
+        return
+    }
+
+	return apiKey, domain
 }
 
 func call() string {
@@ -44,4 +51,6 @@ func call() string {
         log.Fatal(err)
     }
     fmt.Println(string(responseData))
+
+	return "haha"
 }
